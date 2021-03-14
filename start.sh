@@ -2,6 +2,8 @@
 
 set -e
 
-echo "Starting image renderer server..."
+echo "Downloading models..."
+python download_language_models.py --source=de --target=en
 
-uvicorn main:app --host 0.0.0.0 --port $PORT --workers=4
+echo "Starting image renderer server..."
+uvicorn main:app --host 0.0.0.0 --port $PORT --workers=2
