@@ -123,3 +123,6 @@ venv.bak/
 
 # Ignore DevSpace cache and log folder
 .devspace/
+
+data/*
+!data/Instructions.md

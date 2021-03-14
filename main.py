@@ -1,26 +1,32 @@
-import numpy as np
-import sys, os
-from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import HTMLResponse
-from fastapi.middleware.cors import CORSMiddleware
-from starlette.requests import Request
 import io
+import os
+
 import cv2
+import numpy as np
 import pytesseract
-import re
+from fastapi import FastAPI, File
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from starlette.requests import Request
+
+from translator import Translator
+
+TESSERACT_PATH = '/usr/bin/tesseract'
+LANGUAGE_MODEL_DIR = os.path.join(os.getcwd(), 'data')
+
 
 def read_img(img):
-    pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+    pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
     text = pytesseract.image_to_string(img)
     return(text)
 
 
+translator = Translator(LANGUAGE_MODEL_DIR)
 app = FastAPI()
 
 
-class ImageType(BaseModel):
-    url: str
+class Translate(BaseModel):
+    text: str
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,3 +52,8 @@ def prediction(request: Request, file: bytes = File(...)):
         label = read_img(frame)
         return label
     return 'No post request found'
+
+
+@app.post('/translate/')
+def translation(translate: Translate):
+    return translator.translate('de', 'en', translate.text)[0]
