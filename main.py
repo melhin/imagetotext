@@ -56,4 +56,4 @@ def prediction(request: Request, file: bytes = File(...)):
 
 @app.post('/translate/')
 def translation(translate: Translate):
-    return translator.translate('de', 'en', translate.text)[0]
+    return translator.translate('de', 'en', translate.text)
