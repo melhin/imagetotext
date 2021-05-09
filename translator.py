@@ -1,4 +1,5 @@
 from transformers import MarianTokenizer, MarianMTModel
+from transformers import FSMTForConditionalGeneration, FSMTTokenizer
 import os
 from typing import List
 
@@ -15,22 +16,16 @@ class Translator():
 
     def load_model(self, source, target):
         route = f'{source}-{target}'
-        model = f'opus-mt-{route}'
-        path = os.path.join(self.models_dir, model)
-        try:
-            model = MarianMTModel.from_pretrained(path)
-            tok = MarianTokenizer.from_pretrained(path)
-        except:
-            return False, f"Make sure you have downloaded model for {route} translation"
+        path = os.path.join(self.models_dir, f'wmt19-{route}-6-6-base')
+        model = FSMTForConditionalGeneration.from_pretrained(path)
+        tok = FSMTTokenizer.from_pretrained(path)
         self.models[route] = (model, tok)
-        return True, f"Successfully loaded model for {route} transation"
 
     def translate(self, source, target, text):
 
         route = f'{source}-{target}'
-        batch = self.models[route][1].prepare_seq2seq_batch(
-            src_texts=text, return_tensors="pt", padding=True)
-        gen = self.models[route][0].generate(**batch)
-        words: List[str] = self.models[route][1].batch_decode(
-            gen, skip_special_tokens=True)
-        return words
+        model, tokenizer = self.models[route]
+
+        input_ids = tokenizer.encode(text, return_tensors="pt")
+        outputs = model.generate(input_ids)
+        return tokenizer.decode(outputs[0], skip_special_tokens=True)

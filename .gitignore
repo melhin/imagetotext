@@ -126,3 +126,4 @@ venv.bak/
 
 data/*
 !data/Instructions.md
+memory_profile/*
