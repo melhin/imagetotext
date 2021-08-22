@@ -13,9 +13,6 @@ numpy = "^1.19.4"
 python-multipart = "^0.0.5"
 uvicorn = "^0.13.1"
 opencv-python = "^4.4.0"
-transformers = "4.3.3"
-sentencepiece = "^0.1.95"
-torch = "^1.8.0"
 
 [tool.poetry.dev-dependencies]
 

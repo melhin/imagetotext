@@ -10,7 +10,6 @@ from pydantic import BaseModel
 from starlette.requests import Request
 from starlette.responses import Response
 
-from translator import Translator
 
 TESSERACT_PATH = "/usr/bin/tesseract"
 LANGUAGE_MODEL_DIR = os.path.join(os.getcwd(), "data")
@@ -22,7 +21,6 @@ def read_img(img):
     return text
 
 
-translator = Translator(LANGUAGE_MODEL_DIR)
 app = FastAPI()
 
 
@@ -54,8 +52,3 @@ def prediction(request: Request, file: bytes = File(...)):
         label = read_img(frame)
         return label
     return Response(status_code=400)
-
-
-@app.post("/translate/")
-def translation(translate: Translate):
-    return translator.translate("de", "en", translate.text)
